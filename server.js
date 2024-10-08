@@ -1,20 +1,18 @@
 const express = require('express');
-const path = require('path');
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
-// Ruta para servir archivos PDF
-app.get('/download/:filename', (req, res) => {
-    const filename = req.params.filename;
-    const file = path.join(__dirname, 'pdfs', filename); // Ubicación donde guardas los PDFs
-    
-    res.download(file, (err) => {
-        if (err) {
-            res.status(500).send('Error al descargar el archivo.');
-        }
-    });
+// Servir archivos estáticos si tienes
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+  res.send('API funcionando correctamente');
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+app.get('/files/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = `files/${fileName}`;
+  res.sendFile(filePath, { root: __dirname });
 });
+
+module.exports = app;
